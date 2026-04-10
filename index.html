@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>IMPERION - Earn Money Daily</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0A0F2C; color: #EFF3FC; min-height: 100vh; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1C2541; display: flex; justify-content: space-around; padding: 12px 16px; border-top: 1px solid #00E5FF; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #8D99AE; background: none; border: none; cursor: pointer; font-size: 12px; }
+        .nav-item.active { color: #00E5FF; }
+        .btn-primary { background: linear-gradient(135deg, #00E5FF, #B026FF); border: none; padding: 12px 24px; border-radius: 40px; color: white; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-secondary { background: #1C2541; border: 1px solid #00E5FF; padding: 10px 20px; border-radius: 40px; color: #00E5FF; cursor: pointer; }
+        .card { background: #1C2541; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(0, 229, 255, 0.3); }
+        .icoin { width: 120px; height: 120px; background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; cursor: pointer; box-shadow: 0 0 20px rgba(255,215,0,0.5); margin: 0 auto; }
+        .icoin:active { transform: scale(0.95); }
+        .progress-bar { width: 100%; height: 8px; background: #2a3450; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #00F5D4; border-radius: 10px; transition: width 0.3s; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #00E5FF; background: #1C2541; color: white; font-size: 16px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
+        h1, h2, h3 { color: #B026FF; margin-bottom: 16px; }
+        .text-center { text-align: center; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        a { color: #00E5FF; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        function navigateTo(page) { window.location.hash = page; renderPage(); }
+        function getCurrentPage() { return window.location.hash.slice(1) || '/'; }
+        
+        function BottomNav() {
+            const current = getCurrentPage();
+            return `<div class="bottom-nav">
+                <button class="nav-item ${current === '/' ? 'active' : ''}" onclick="navigateTo('/')">🏠 Home</button>
+                <button class="nav-item ${current === '/dashboard' ? 'active' : ''}" onclick="navigateTo('/dashboard')">📊 Dashboard</button>
+                <button class="nav-item ${current === '/tasks' ? 'active' : ''}" onclick="navigateTo('/tasks')">📋 Tasks</button>
+                <button class="nav-item ${current === '/profile' ? 'active' : ''}" onclick="navigateTo('/profile')">👤 Profile</button>
+            </div>`;
+        }
+        
+        function LandingPage() {
+            return `<div class="container">
+                <h1 class="text-center">💰 IMPERION</h1>
+                <p class="text-center" style="margin-bottom: 20px;">Earn money by completing tasks and tapping the I Coin!</p>
+                <div class="text-center"><button class="btn-primary" onclick="navigateTo('/signup')">Get Started</button></div>
+                <div class="grid-2" style="margin: 30px 0;">
+                    <div class="card text-center">🎵 TikTok</div>
+                    <div class="card text-center">💬 WhatsApp</div>
+                    <div class="card text-center">📸 Instagram</div>
+                </div>
+                <h2 class="text-center">Plans</h2>
+                <div class="grid-2">
+                    <div class="card text-center"><h3>Basic</h3><p style="font-size:24px;color:#FFD700;">₦1,000</p><p>5 Months</p><p>40% earnings</p></div>
+                    <div class="card text-center" style="border:2px solid #00E5FF;"><h3>Premium</h3><p style="font-size:24px;color:#FFD700;">₦2,500</p><p>Lifetime</p><p>100% earnings</p></div>
+                </div>
+                <div class="text-center"><a href="https://chat.whatsapp.com/DkUVaf1ZIus1rxummUzXYW">Join WhatsApp Group</a></div>
+            </div>${BottomNav()}`;
+        }
+        
+        function SignupPage() {
+            return `<div class="container"><h2>Create Account</h2>
+                <form id="signupForm">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="tel" id="phone" placeholder="Phone" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <input type="text" id="referralCode" placeholder="Referral Code (Optional)">
+                    <button type="submit" class="btn-primary" style="width:100%">Create Account</button>
+                </form>
+                <p class="text-center" style="margin-top:20px;">Already have an account? <a href="#" onclick="navigateTo('/login');return false;">Login</a></p>
+                <div class="text-center"><a href="#" onclick="navigateTo('/admin');return false;" style="color:#FFD700;">A</a></div>
+            </div>${BottomNav()}`;
+        }
+        
+        function LoginPage() {
+            return `<div class="container"><h2>Login</h2>
+                <form id="loginForm">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit" class="btn-primary" style="width:100%">Login</button>
+                </form>
+                <p class="text-center" style="margin-top:20px;">No account? <a href="#" onclick="navigateTo('/signup');return false;">Sign up</a></p>
+            </div>${BottomNav()}`;
+        }
+        
+        function DashboardPage() {
+            let taps = localStorage.getItem('taps') ? parseInt(localStorage.getItem('taps')) : 0;
+            let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 0;
+            let lastDate = localStorage.getItem('lastDate');
+            let today = new Date().toDateString();
+            if (lastDate !== today) { taps = 0; localStorage.setItem('taps', taps); localStorage.setItem('lastDate', today); }
+            return `<div class="container"><h2>Welcome!</h2>
+                <div class="text-center" style="margin:30px 0;">
+                    <div class="icoin" onclick="handleTap()">🪙 I Coin</div>
+                    <p>Taps Today: ${taps}/200</p>
+                    <p>I Coins: ${coins}</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${taps/200*100}%"></div></div>
+                </div>
+                <div class="grid-2">
+                    <button class="btn-secondary" onclick="navigateTo('/tasks')">📋 Tasks</button>
+                    <button class="btn-secondary" onclick="navigateTo('/withdraw')">💰 Withdraw</button>
+                    <button class="btn-secondary" onclick="navigateTo('/deposit')">💳 Deposit</button>
+                    <button class="btn-secondary" onclick="navigateTo('/referrals')">👥 Referrals</button>
+                </div>
+            </div>${BottomNav()}`;
+        }
+        
+        function TasksPage() {
+            return `<div class="container"><h2>Tasks</h2>
+                <div class="card"><h3>TikTok Video</h3><p>Reward: ₦500</p><button class="btn-primary" onclick="alert('Task submitted! Pending approval.')">Submit</button></div>
+                <div class="card"><h3>WhatsApp Post</h3><p>Reward: ₦300</p><button class="btn-primary" onclick="alert('Task submitted! Pending approval.')">Submit</button></div>
+            </div>${BottomNav()}`;
+        }
+        
+        function WithdrawPage() {
+            return `<div class="container"><h2>Withdraw</h2>
+                <div class="card"><p>Task Balance: ₦0</p><p>Referral: ₦0</p><p>Daily: ₦0</p><p>I Coins: 0</p></div>
+                <form id="withdrawForm">
+                    <select><option>Task (Min ₦2500)</option><option>Referral (Min ₦1500)</option><option>Daily (Min ₦3000)</option></select>
+                    <input type="number" placeholder="Amount" required>
+                    <input type="text" placeholder="Bank Name" required>
+                    <input type="text" placeholder="Account Number" required>
+                    <button type="submit" class="btn-primary" style="width:100%">Submit</button>
+                </form>
+            </div>${BottomNav()}`;
+        }
+        
+        function DepositPage() {
+            return `<div class="container"><h2>Deposit</h2>
+                <div class="card"><h3>Bank Details</h3><p>Favour Ifedayo Sam Ayinde</p><p>7084318814</p><p>Opay</p><button class="btn-secondary" onclick="copyNumber()">Copy Number</button></div>
+                <form id="depositForm">
+                    <select><option>Basic - ₦1,000</option><option>Premium - ₦2,500</option></select>
+                    <input type="text" placeholder="Receipt URL">
+                    <button type="submit" class="btn-primary" style="width:100%">Submit</button>
+                </form>
+            </div>${BottomNav()}`;
+        }
+        
+        function ReferralsPage() {
+            let link = window.location.origin + '/Imperion-/#/signup?ref=USER';
+            return `<div class="container"><h2>Referrals</h2>
+                <div class="card"><input type="text" value="${link}" id="refLink" readonly><button class="btn-secondary" onclick="copyLink()">Copy Link</button></div>
+                <div class="card"><p>Total Referrals: 0</p><p>Commissions: ₦0</p></div>
+            </div>${BottomNav()}`;
+        }
+        
+        function ProfilePage() {
+            return `<div class="container"><h2>Profile</h2>
+                <div class="card"><p>Username: User</p><p>Email: user@example.com</p><p>Plan: None</p><p>Multiplier: 0x</p></div>
+                <div class="card"><h3>Balances</h3><p>Task: ₦0</p><p>Referral: ₦0</p><p>Daily: ₦0</p><p>I Coins: 0</p></div>
+            </div>${BottomNav()}`;
+        }
+        
+        function HistoryPage() {
+            return `<div class="container"><h2>History</h2><div class="card"><p>No transactions yet.</p></div></div>${BottomNav()}`;
+        }
+        
+        function DailyBonusPage() {
+            return `<div class="container text-center"><h2>Daily Bonus</h2><div class="card"><p style="font-size:48px;">🎁</p><button class="btn-primary" onclick="alert('Activate a plan first!')">Claim Bonus</button></div></div>${BottomNav()}`;
+        }
+        
+        function AdminPage() {
+            let pass = prompt('Admin Passcode:');
+            if (pass !== '2006') { alert('Wrong passcode'); navigateTo('/'); return ''; }
+            return `<div class="container"><h2>Admin Panel</h2><div class="card"><p>No pending withdrawals.</p></div><div class="card"><p>No pending deposits.</p></div><button class="btn-primary" onclick="navigateTo('/')">Back</button></div>${BottomNav()}`;
+        }
+        
+        window.handleTap = function() {
+            let taps = parseInt(localStorage.getItem('taps')) || 0;
+            let coins = parseInt(localStorage.getItem('coins')) || 0;
+            let lastDate = localStorage.getItem('lastDate');
+            let today = new Date().toDateString();
+            if (lastDate !== today) { taps = 0; }
+            if (taps >= 200) { alert('Daily limit reached!'); return; }
+            taps++; coins += 10;
+            localStorage.setItem('taps', taps);
+            localStorage.setItem('coins', coins);
+            localStorage.setItem('lastDate', today);
+            renderPage();
+        };
+        
+        window.copyNumber = function() { navigator.clipboard.writeText('7084318814'); alert('Copied!'); };
+        window.copyLink = function() { 
+            let link = document.getElementById('refLink');
+            if(link) { navigator.clipboard.writeText(link.value); alert('Copied!'); }
+        };
+        
+        document.addEventListener('submit', function(e) {
+            if (e.target.id === 'signupForm') { e.preventDefault(); alert('✅ Account created! Redirecting...'); setTimeout(() => navigateTo('/login'), 2000); }
+            if (e.target.id === 'loginForm') { e.preventDefault(); alert('✅ Login successful!'); setTimeout(() => navigateTo('/dashboard'), 1000); }
+            if (e.target.id === 'withdrawForm') { e.preventDefault(); alert('Withdrawal request submitted!'); }
+            if (e.target.id === 'depositForm') { e.preventDefault(); alert('Deposit request submitted!'); }
+        });
+        
+        function renderPage() {
+            let page = getCurrentPage();
+            let app = document.getElementById('app');
+            switch(page) {
+                case '/': app.innerHTML = LandingPage(); break;
+                case '/signup': app.innerHTML = SignupPage(); break;
+                case '/login': app.innerHTML = LoginPage(); break;
+                case '/dashboard': app.innerHTML = DashboardPage(); break;
+                case '/tasks': app.innerHTML = TasksPage(); break;
+                case '/withdraw': app.innerHTML = WithdrawPage(); break;
+                case '/deposit': app.innerHTML = DepositPage(); break;
+                case '/referrals': app.innerHTML = ReferralsPage(); break;
+                case '/profile': app.innerHTML = ProfilePage(); break;
+                case '/history': app.innerHTML = HistoryPage(); break;
+                case '/daily-bonus': app.innerHTML = DailyBonusPage(); break;
+                case '/admin': app.innerHTML = AdminPage(); break;
+                default: app.innerHTML = LandingPage();
+            }
+        }
+        
+        window.addEventListener('hashchange', renderPage);
+        renderPage();
+    </script>
+</body>
+  </html>
